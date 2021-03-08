@@ -23,9 +23,3 @@ Next, clone this project by typing the following commands in a terminal:
 Finally, start Jupyter Notebook.
 
     $ jupyter notebook
-
-### If you want to execute the code on your own machine *with R*
-
-Install the R kernel for Jupyter. Instructions are here: [IRkernel](https://github.com/IRkernel/IRkernel) and here: [Rich Pauloo](https://richpauloo.github.io/2018-05-16-Installing-the-R-kernel-in-Jupyter-Lab/).
-
-Then launch Jupyter Lab (some code cells don't render in Jupyter Notebook).

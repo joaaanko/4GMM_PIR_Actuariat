@@ -21,7 +21,6 @@ def get_claims_poisson(u, n, premium, lamb, claims_max_cost):
     #R is the fortune of the company, we will track it using the Cramér-Lundberg model.
     R = premium*t+u
     #lambda is the parameter for the Poisson process.
-    lamb = .02
     N = len(t)
     X_T = [np.random.poisson(lamb, N)]
     S = [[np.sum(X[0:i]) for i in range(N)] for X in X_T]

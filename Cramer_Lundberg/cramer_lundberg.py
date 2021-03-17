@@ -1,5 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from os import system
+from IPython.display import clear_output
 
 
 # Our goal is to have a np.random.poisson() vector that only increases 
@@ -19,8 +21,8 @@ def claims_times(N_T):
     S=np.zeros(len(N_T))
     n = len(S)
     for i in range(len(S)):
-        if N_T[i]==1:
-            S[i:]+=1
+        if N_T[i]!=0:
+            S[i:]+=N_T[i]
     for i in range(len(S)):
         S[i]=int(S[i])
     return S
@@ -45,7 +47,7 @@ def y_tilde_n(X, premium, W):
     #first index=1!!!!!!
     for n in range(1,N):
         sum_value=0
-        for k in range(1,n+1):
+        for k in range(n+1):
             sum_value += X[k]-premium*W[k]
         y[n] = sum_value
     return y
@@ -59,30 +61,36 @@ def get_claims_poisson(u, n, premium, lamb, claims_max_cost):
     R = premium*t+u
     #lambda is the parameter for the Poisson process.
     N = len(t)
-    print("creating the poisson process history vector...")
+    print("Creating the poisson process history vector...", end=" ")
     S=claims_times(transform_S_1_increment(np.random.poisson(lamb/grad, N)))
-    print("done !")
+    print("Done!")
     X_sum=0
     X_claim_history=[]
-    print("changing the course of R...")
+    print("Changing the course of R...", end=" ")
     for i in range(len(t)-1):
         if S[i] < S[i+1]:
             X = np.random.uniform(0, claims_max_cost)
             X_claim_history.append(X)
             R[i:] -= X
             X_sum+=X
-    print("done !")
-    
+    print("Done!")
+    print("Reformatting the history on claims into an np.array()...",end=" ")
     X_claim_history=np.array(X_claim_history)
+    print("Done!")
+    print("Comuting the values ok Wk...", end=" ")
     W=get_W_times(S)
-    #Create arrays to track Y and Y tilde
+    print("Done!")
+    print("Creating the surplus process...", end=" ")
     Y = R-u
-#     ytn = y_tilde_n(X_claim_history, premium, W)
-    ytn=0
-    #expected value for X_1
+    print("Done!")
+    print("Computing Y tilde...", end=" ")
+    ytn = y_tilde_n(X_claim_history, premium, W)
+    print("Done!")
+    print("Computing the empirical expected for value of the claims and \u03C1...", end=" ")
     mu=1/S[-1]*X_sum
     rho = (lamb*mu)/premium
-    
+    print("Done!")
+    clear_output(wait=False)
     return (R, S, t, Y, rho, mu, ytn)
 
 
@@ -105,16 +113,27 @@ def plot_growth(R, N, t, Y):
     plt.title("Tracking of the fortune using Cramér-Lundberg Model")
     plt.show()
 
-def plot_y_tilde_n(ytn,rho, mu, lamb):
-    print("\u03BC = "+str(mu))
-    print("\u03BB = "+str(lamb))
-    print("\u03C1 = "+str(rho))
-    plt.plot(ytn)
+def plot_y_tilde_n(ytn,rho, mu, lamb, premium, plot):
+    print("\u03BC = "+str(mu), end=", ")
+    print("\u03BB = "+str(lamb), end=", ")
+    print("c = "+str(premium))
     a = r'\tilde{Y}_n'
-    plt.xlabel("n")
-    plt.ylabel(r"$%s$" %(a),fontsize=15)
-    plt.title("tracking the random walk")
-    plt.show()
+    if plot==True:
+        fig=plt.figure(figsize=(12.8,9.6))
+        plt.plot(ytn)
+        plt.xlabel("n")
+        plt.ylabel(r"$%s$" %(a),fontsize=15)
+        plt.title(r"Tracking $%s$" %(a))
+        plt.show()
+    print("\u03C1 = \u03BB\u03BC/c = "+str(rho))
+    if rho < 1:
+        print("The survival probability equals 1. Good!")
+    elif rho==1:
+        print("The economical growth is very irregular.")
+        print("The survival probability equals 0. Not good")
+    else:
+        print("The survival probability equals 0. Not good")
+        
     
     
     

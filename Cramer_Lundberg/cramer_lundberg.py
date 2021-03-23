@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from os import system
-from IPython.display import clear_output
 
 
 # Our goal is to have a np.random.poisson() vector that only increases 
@@ -46,51 +45,33 @@ def y_tilde_n(X, premium, W):
     y = np.zeros(N)
     #first index=1!!!!!!
     for n in range(1,N):
-        sum_value=0
-        for k in range(n+1):
-            sum_value += X[k]-premium*W[k]
-        y[n] = sum_value
+        y[n] = y[n-1]+ (X[n] - premium*W[n])
     return y
 
 def get_claims_poisson(u, n, premium, lamb, claims_max_cost):
     #n is the number of days.
     #t is the x axis, used to track the time.
-    grad=10
+    grad=1000
     t = np.arange(0, n+.1, 1/grad)
     #R is the fortune of the company, we will track it using the Cramér-Lundberg model.
     R = premium*t+u
     #lambda is the parameter for the Poisson process.
     N = len(t)
-    print("Creating the poisson process history vector...", end=" ")
     S=claims_times(transform_S_1_increment(np.random.poisson(lamb/grad, N)))
-    print("Done!")
     X_sum=0
     X_claim_history=[]
-    print("Changing the course of R...", end=" ")
     for i in range(len(t)-1):
         if S[i] < S[i+1]:
             X = np.random.uniform(0, claims_max_cost)
             X_claim_history.append(X)
             R[i:] -= X
             X_sum+=X
-    print("Done!")
-    print("Reformatting the history on claims into an np.array()...",end=" ")
     X_claim_history=np.array(X_claim_history)
-    print("Done!")
-    print("Comuting the values ok Wk...", end=" ")
     W=get_W_times(S)
-    print("Done!")
-    print("Creating the surplus process...", end=" ")
     Y = R-u
-    print("Done!")
-    print("Computing Y tilde...", end=" ")
     ytn = y_tilde_n(X_claim_history, premium, W)
-    print("Done!")
-    print("Computing the empirical expected for value of the claims and \u03C1...", end=" ")
     mu=1/S[-1]*X_sum
     rho = (lamb*mu)/premium
-    print("Done!")
-    clear_output(wait=False)
     return (R, S, t, Y, rho, mu, ytn)
 
 

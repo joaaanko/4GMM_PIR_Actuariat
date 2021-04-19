@@ -80,7 +80,7 @@ def plot_growth(R, N, t, Y):
     fig=plt.figure(figsize=(12.8,9.6))
     fig, ax1 = plt.subplots(figsize=(12.8,9.6))
     g1 = ax1.plot(t, R, label="Fortune (€)")
-    g2 = ax1.plot(t,Y,label="Surplus Process (€)")
+#     g2 = ax1.plot(t,Y,label="Surplus Process (€)")
     ax1.set_ylabel("Fortune (€)")
     ax1.set_xlabel("Number of days")
     #plot claims using a secondary y axis
@@ -88,10 +88,11 @@ def plot_growth(R, N, t, Y):
     ax2.set_ylabel("Number of claims")
     g3 = ax2.step(t, N, color='orange', label="Number of claims")
     #prepare legend
-    lns = g1+g2+g3
+#     lns = g1+g2+g3
+    lns= g1+g3
     labs = [l.get_label() for l in lns]
     plt.legend(lns, labs)
-    plt.title("Tracking of the fortune using Cramér-Lundberg Model")
+#     plt.title("Tracking of the fortune using Cramér-Lundberg Model")
     plt.show()
 
 def plot_y_tilde_n(ytn,rho, mu, lamb, premium, plot):
